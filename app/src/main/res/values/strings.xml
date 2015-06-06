@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">プレフィックスplus</string>
+    <string name="action_settings">Settings</string>
+    <string name="button_add_prefix">プレフィックスを追加</string>
+    <string name="text_title">表示名称</string>
+    <string name="text_prefix">プレフィックス</string>
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">キャンセル</string>
+    <string name="button_delete">削除</string>
+    <string name="title_add_prefix">新しく追加</string>
+    <string name="title_edit_prefix">編集</string>
+    <string name="title_hook">プレフィックスを選択</string>
+    <string name="item_no_prefix">なし</string>
+    <string name="check_enable_prefix">アプリを有効にする</string>
+
+</resources>
