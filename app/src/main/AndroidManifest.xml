@@ -10,6 +10,9 @@
 
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
     <uses-permission android:name="android.permission.CALL_PHONE" />
+	<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+	<uses-permission android:name="android.permission.READ_CALL_LOG"/>
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG"/>
     
     <application
         android:allowBackup="true"
@@ -53,10 +56,16 @@
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
             </intent-filter>
         </receiver>
+	    <receiver android:name=".PhoneStateReceiver">
+		    <intent-filter>
+			    <action android:name="android.intent.action.PHONE_STATE" />
+		    </intent-filter>
+	    </receiver>
         <provider android:name="PrefixProvider"
             android:authorities="jp.co.shekeenlab.PrefixDial.prefix"
             android:exported="false">
         </provider>
+	    <service android:name=".LogEditorService"/>
     </application>
 
 </manifest>

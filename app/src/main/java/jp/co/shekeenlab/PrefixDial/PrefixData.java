@@ -54,4 +54,13 @@ public class PrefixData implements Parcelable {
 			return new PrefixData[size];
 		}
 	}
+
+	public boolean matches(String number){
+		return number.indexOf(prefix) == 0;
+	}
+	
+	/* 引数のnumberからプレフィックスを削除する */
+	public String removePrefix(String number){
+		return number.substring(prefix.length());
+	}
 }

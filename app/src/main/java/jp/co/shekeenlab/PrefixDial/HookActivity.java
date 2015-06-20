@@ -38,8 +38,8 @@ public class HookActivity extends Activity implements OnItemClickListener {
 		/* 履歴からコール開始した場合、前に追加したプレフィックスが残っているので、ここで除去する */
 		/* 仕様としてはやや微妙な気がするが、無効な番号にコールするのもいやなので。 */
 		for(PrefixData data : dataList){
-			if(mPhoneNumber.indexOf(data.prefix) == 0){
-				mPhoneNumber = mPhoneNumber.substring(data.prefix.length());
+			if(data.matches(mPhoneNumber)){
+				mPhoneNumber = data.removePrefix(mPhoneNumber);
 				break;
 			}
 		}
