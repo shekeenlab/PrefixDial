@@ -35,8 +35,7 @@ public class HookActivity extends Activity implements OnItemClickListener {
 		mListPrefix = (ListView) findViewById(R.id.listSelPrefix);
 		List<PrefixData> dataList = PrefixResolver.loadFromDatabase(this);
 		
-		/* 履歴からコール開始した場合、前に追加したプレフィックスが残っているので、ここで除去する */
-		/* 仕様としてはやや微妙な気がするが、無効な番号にコールするのもいやなので。 */
+		/* 履歴からコール開始した場合、プレフィックスが残っている可能性があるので、ここで除去する */
 		for(PrefixData data : dataList){
 			if(data.matches(mPhoneNumber)){
 				mPhoneNumber = data.removePrefix(mPhoneNumber);
