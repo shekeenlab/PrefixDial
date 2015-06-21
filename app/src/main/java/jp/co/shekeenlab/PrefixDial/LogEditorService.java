@@ -5,8 +5,10 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.os.IBinder;
 import android.provider.BaseColumns;
 import android.provider.CallLog;
@@ -17,21 +19,48 @@ import java.util.List;
  * 着信履歴を編集するサービス。通話終了直後だと履歴が書き込まれる前にプレフィックスを削除しようとしてしまうため
  */
 public class LogEditorService extends Service{
+	
+	private ContentResolver mResolver;
+	private CallLogObserver mObserver;
+	
 	@Override
 	public IBinder onBind(Intent intent){
 		return null;
 	}
 
 	@Override
+	public void onDestroy(){
+		super.onDestroy();
+
+		if(mObserver != null){
+			mResolver.unregisterContentObserver(mObserver);
+			mResolver = null;
+			mObserver = null;
+		}
+	}
+	
+	@Override
 	public int onStartCommand(Intent intent, int flags, int startId){
-		removePrefixFromHistory();
-		return START_NOT_STICKY;
+		if(mObserver == null){
+			mResolver = getContentResolver();
+			mObserver = new CallLogObserver(this);
+			mResolver.registerContentObserver(CallLog.Calls.CONTENT_URI, true, mObserver);
+		}
+		
+		return START_STICKY;
 	}
 
 	private void removePrefixFromHistory(){
-		ContentResolver resolver = getContentResolver();
+		if(mObserver == null){
+			return;
+		}
+
+		/* 自分の書き込みによりコールバックが呼ばれてしまうので、コールバックの登録を解除しておく */
+		mResolver.unregisterContentObserver(mObserver);
+		mObserver = null;
+		
 		/* DEFAULT_SORT_ORDERは日付で降順 */
-		Cursor cursor = resolver.query(CallLog.Calls.CONTENT_URI, null, null, null, CallLog.Calls.DEFAULT_SORT_ORDER);
+		Cursor cursor = mResolver.query(CallLog.Calls.CONTENT_URI, null, null, null, CallLog.Calls.DEFAULT_SORT_ORDER);
 		/* カーソル内の列インデックスを取得する */
 		int indexId = cursor.getColumnIndex(BaseColumns._ID);
 		int indexNumber = cursor.getColumnIndex(CallLog.Calls.NUMBER);/* 電話番号 */
@@ -53,9 +82,28 @@ public class LogEditorService extends Service{
 			ContentValues values = new ContentValues();
 			values.put(CallLog.Calls.NUMBER, number);
 			Uri uri = ContentUris.withAppendedId(CallLog.Calls.CONTENT_URI, id);
-			resolver.update(uri, values, null, null);
+			mResolver.update(uri, values, null, null);
 			DebugHelper.print("WRITE CALL LOG", number);
 		}
 		cursor.close();
+		mResolver = null;
+		/* もう通話履歴を監視する必要がないのでサービスを終了する */
+		stopSelf();
+	}
+
+	private static class CallLogObserver extends ContentObserver{
+
+		LogEditorService mService;
+		
+		CallLogObserver(LogEditorService service){
+			super(new Handler());/* Handlerを渡すとonChangeはメインルーパで実施される */
+			mService = service;
+		}
+
+		@Override
+		public void onChange(boolean selfChange, Uri uri){
+			DebugHelper.print("CHANGE", uri.toString());
+			mService.removePrefixFromHistory();
+		}
 	}
 }
