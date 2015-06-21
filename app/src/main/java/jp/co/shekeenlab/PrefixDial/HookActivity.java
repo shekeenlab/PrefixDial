@@ -5,10 +5,13 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -25,6 +28,13 @@ public class HookActivity extends Activity implements OnItemClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.hook);
 		overridePendingTransition(0, 0);
+
+		/* ダイアログの位置を設定する */
+		SharedPreferences settings = getSharedPreferences(MainActivity.PREFERENCE_SETTINGS, Context.MODE_PRIVATE);
+		int gravity = settings.getInt(getString(R.string.key_hook_gravity), Gravity.NO_GRAVITY);
+		WindowManager.LayoutParams params = getWindow().getAttributes();
+		params.gravity = gravity;
+		getWindow().setAttributes(params);
 		
 		Intent intent = getIntent();
 		mPhoneNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);

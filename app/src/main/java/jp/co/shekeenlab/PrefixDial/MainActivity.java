@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -22,13 +23,14 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class MainActivity extends Activity implements OnItemClickListener, OnClickListener, OnCheckedChangeListener {
 
-	private static final String PREFERENCE_SETTINGS = "settings";
+	public static final String PREFERENCE_SETTINGS = "settings";
 	private static final String KEY_INSTALL_DEFAULT = "installDefault";
 	private static final int REQUEST_EDIT_PREFIX = 1;
 	private SharedPreferences mSettings;
 	private ListView mListPrefix;
 	private Button mButtonAdd;
 	private CheckBox mCheckEnable;
+	private CheckBox mCheckShowBottom;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,11 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 		mCheckEnable = (CheckBox) findViewById(R.id.checkEnableApp);
 		mCheckEnable.setOnCheckedChangeListener(this);
 		mCheckEnable.setChecked(isDialReceiverEnabled());
+
+		mCheckShowBottom = (CheckBox) findViewById(R.id.checkShowBottom);
+		mCheckShowBottom.setOnCheckedChangeListener(this);
+		int gravity = mSettings.getInt(getString(R.string.key_hook_gravity), Gravity.CENTER);
+		mCheckShowBottom.setChecked(gravity == Gravity.BOTTOM);
 	}
 
 	private void installDefaultPrefix(){
@@ -98,6 +105,13 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 		if(buttonView == mCheckEnable){
 			enableDialReceiver(isChecked);
+		}
+		else if(buttonView == mCheckShowBottom){
+			int gravity = Gravity.NO_GRAVITY;
+			if(isChecked){
+				gravity = Gravity.BOTTOM;
+			}
+			mSettings.edit().putInt(getString(R.string.key_hook_gravity), gravity).commit();
 		}
 	}
 	
