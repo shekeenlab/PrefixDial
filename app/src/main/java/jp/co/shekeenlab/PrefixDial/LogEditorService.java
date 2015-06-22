@@ -32,6 +32,7 @@ public class LogEditorService extends Service{
 	public void onDestroy(){
 		super.onDestroy();
 
+		/* 異常系。通常はonChangeイベントでnullにクリアされている */
 		if(mObserver != null){
 			mResolver.unregisterContentObserver(mObserver);
 			mResolver = null;
@@ -64,26 +65,33 @@ public class LogEditorService extends Service{
 		/* カーソル内の列インデックスを取得する */
 		int indexId = cursor.getColumnIndex(BaseColumns._ID);
 		int indexNumber = cursor.getColumnIndex(CallLog.Calls.NUMBER);/* 電話番号 */
+		int indexType = cursor.getColumnIndex(CallLog.Calls.TYPE);/* 発信/受信 */
 		/* 先頭だけ取り出して編集する */
 		if(cursor.moveToFirst()){
 			long id = cursor.getLong(indexId);
-			String number = cursor.getString(indexNumber);
-
-			/* プレフィックスを削除する */
-			List<PrefixData> dataList = PrefixResolver.loadFromDatabase(this);
-			for(PrefixData data : dataList){
-				if(data.matches(number)){
-					number = data.removePrefix(number);
-					break;
-				}
-			}
+			int type = cursor.getInt(indexType);
+			DebugHelper.print("LOG TYPE", type);
 			
-			/* 修正した電話番号を保存する */
-			ContentValues values = new ContentValues();
-			values.put(CallLog.Calls.NUMBER, number);
-			Uri uri = ContentUris.withAppendedId(CallLog.Calls.CONTENT_URI, id);
-			mResolver.update(uri, values, null, null);
-			DebugHelper.print("WRITE CALL LOG", number);
+			/* 発信のときのみ通話履歴を操作する */
+			if(type == CallLog.Calls.OUTGOING_TYPE){
+				String number = cursor.getString(indexNumber);
+
+				/* プレフィックスを削除する */
+				List<PrefixData> dataList = PrefixResolver.loadFromDatabase(this);
+				for(PrefixData data : dataList){
+					if(data.matches(number)){
+						number = data.removePrefix(number);
+						break;
+					}
+				}
+			
+				/* 修正した電話番号を保存する */
+				ContentValues values = new ContentValues();
+				values.put(CallLog.Calls.NUMBER, number);
+				Uri uri = ContentUris.withAppendedId(CallLog.Calls.CONTENT_URI, id);
+				mResolver.update(uri, values, null, null);
+				DebugHelper.print("WRITE CALL LOG", number);
+			}
 		}
 		cursor.close();
 		mResolver = null;
