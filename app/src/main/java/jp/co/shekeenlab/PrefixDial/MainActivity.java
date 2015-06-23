@@ -31,6 +31,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 	private Button mButtonAdd;
 	private CheckBox mCheckEnable;
 	private CheckBox mCheckShowBottom;
+	private CheckBox mCheckRemovePrefix;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +59,11 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 		mCheckShowBottom.setOnCheckedChangeListener(this);
 		int gravity = mSettings.getInt(getString(R.string.key_hook_gravity), Gravity.CENTER);
 		mCheckShowBottom.setChecked(gravity == Gravity.BOTTOM);
+
+		mCheckRemovePrefix = (CheckBox) findViewById(R.id.checkRemovePrefix);
+		mCheckRemovePrefix.setOnCheckedChangeListener(this);
+		boolean removePrefix = mSettings.getBoolean(getString(R.string.key_remove_prefix), false);
+		mCheckRemovePrefix.setChecked(removePrefix);
 	}
 
 	private void installDefaultPrefix(){
@@ -112,6 +118,9 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 				gravity = Gravity.BOTTOM;
 			}
 			mSettings.edit().putInt(getString(R.string.key_hook_gravity), gravity).commit();
+		}
+		else if(buttonView == mCheckRemovePrefix){
+			mSettings.edit().putBoolean(getString(R.string.key_remove_prefix), isChecked).commit();
 		}
 	}
 	
