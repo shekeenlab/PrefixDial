@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="jp.co.shekeenlab.PrefixDial"
-    android:versionCode="8"
-    android:versionName="1.0" >
+    android:versionCode="19"
+    android:versionName="1.1" >
+    <!-- versionCodeはコミット数+8 -->
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -34,18 +35,6 @@
             android:launchMode="singleInstance"
             android:excludeFromRecents="true"
             android:noHistory="true">
-            <!-- <intent-filter>
-                <action android:name="android.intent.action.CALL" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:scheme="tel" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.CALL" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="vnd.android.cursor.item/phone" />
-                <data android:mimeType="vnd.android.cursor.item/phone_v2" />
-                <data android:mimeType="vnd.android.cursor.item/person" />
-            </intent-filter> -->
         </activity>
         <activity
             android:name="EditActivity"
