@@ -36,9 +36,15 @@
     <CheckBox
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/check_remove_prefix"
+        android:id="@+id/checkRemovePrefix"/>
+    
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/check_show_bottom"
         android:id="@+id/checkShowBottom"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="20dp"/>
 
     <Button
         android:id="@+id/buttonAddPrefix"
