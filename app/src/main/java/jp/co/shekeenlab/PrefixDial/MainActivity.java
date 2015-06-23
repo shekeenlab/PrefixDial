@@ -78,9 +78,10 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 			data.prefix = "003768";
 			PrefixResolver.addItemToDatabase(this, data);
 
-			data.title = "みおふぉん";
-			data.prefix = "0037691";
-			PrefixResolver.addItemToDatabase(this, data);
+			/* 動作確認できたら有効化する */
+//			data.title = "みおふぉん";
+//			data.prefix = "0037691";
+//			PrefixResolver.addItemToDatabase(this, data);
 			
 			data.title = "非通知";
 			data.prefix = "184";
