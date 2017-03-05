@@ -2,6 +2,7 @@ package jp.co.shekeenlab.PrefixDial;
 
 import java.util.List;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.ComponentName;
@@ -11,6 +12,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -135,7 +138,27 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 			mListPrefix.setAdapter(adapter);
 		}
 	}
-	
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu){
+		getMenuInflater().inflate(R.menu.main, menu);
+
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item){
+		switch(item.getItemId()){
+		case R.id.action_privacy:
+			Uri uri = Uri.parse("https://sites.google.com/view/shekeenlab/%E3%83%97%E3%83%AC%E3%83%95%E3%82%A3%E3%83%83%E3%82%AF%E3%82%B9plus%E3%83%97%E3%83%A9%E3%82%A4%E3%83%90%E3%82%B7%E3%83%BC%E3%83%9D%E3%83%AA%E3%82%B7%E3%83%BC");
+			Intent i = new Intent(Intent.ACTION_VIEW, uri);
+			startActivity(i);
+			return true;
+		}
+
+		return false;
+	}
+
 	private void enableDialReceiver(boolean enabled){
 		PackageManager pm = getPackageManager();
 		ComponentName component = new ComponentName(this, DialReceiver.class);
