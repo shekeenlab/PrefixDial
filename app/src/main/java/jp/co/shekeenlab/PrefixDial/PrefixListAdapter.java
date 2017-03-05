@@ -34,6 +34,30 @@ public class PrefixListAdapter extends ArrayAdapter<PrefixData> {
 		else{
 			textPrefix.setText(data.prefix);
 		}
+		convertView.setTag(data);
 		return convertView;
+	}
+
+	public void replace(PrefixData item1, PrefixData item2){
+		int position1 = getPosition(item1);
+		int position2 = getPosition(item2);
+
+		if(position2 > position1){
+			replaceInOrder(item1, item2);
+		}
+		else{
+			replaceInOrder(item2, item1);
+		}
+	}
+
+	private void replaceInOrder(PrefixData smaller, PrefixData larger){
+		int posLarger = getPosition(larger);
+		int posSmaller = getPosition(smaller);
+
+		remove(larger);
+		insert(smaller, posLarger);
+		/* smallerは2つListに入っているので、若いほうをremoveで削除する */
+		remove(smaller);
+		insert(larger, posSmaller);
 	}
 }

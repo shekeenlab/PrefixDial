@@ -2,7 +2,13 @@ package jp.co.shekeenlab.PrefixDial;
 
 import java.util.List;
 
+import android.annotation.TargetApi;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.ComponentName;
@@ -11,12 +17,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
+import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.DragShadowBuilder;
 import android.view.View.OnClickListener;
+import android.view.View.OnDragListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -24,7 +34,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class MainActivity extends Activity implements OnItemClickListener, OnClickListener, OnCheckedChangeListener {
+public class MainActivity extends Activity implements OnItemClickListener, OnClickListener, OnCheckedChangeListener, OnItemLongClickListener{
 
 	public static final String PREFERENCE_SETTINGS = "settings";
 	private static final String KEY_INSTALL_DEFAULT = "installDefault";
@@ -35,6 +45,8 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 	private CheckBox mCheckEnable;
 	private CheckBox mCheckShowBottom;
 	private CheckBox mCheckRemovePrefix;
+	private PrefixListAdapter mAdapter;
+	private View mDragTarget;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +59,13 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 		mListPrefix = (ListView) findViewById(R.id.listPrefix);
 		List<PrefixData> dataList = PrefixResolver.loadFromDatabase(this);
 		
-		PrefixListAdapter adapter = new PrefixListAdapter(this, 0, dataList);
-		mListPrefix.setAdapter(adapter);
+		mAdapter = new PrefixListAdapter(this, 0, dataList);
+		mListPrefix.setAdapter(mAdapter);
 		mListPrefix.setOnItemClickListener(this);
+		mListPrefix.setOnItemLongClickListener(this);
+		if(VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB){
+			mListPrefix.setOnDragListener(new MyOnDragListener(this));
+		}
 		
 		mButtonAdd = (Button) findViewById(R.id.buttonAddPrefix);
 		mButtonAdd.setOnClickListener(this);
@@ -174,5 +190,110 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 		PackageManager pm = getPackageManager();
 		ComponentName component = new ComponentName(this, DialReceiver.class);
 		return pm.getComponentEnabledSetting(component) != PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
+		if(VERSION.SDK_INT < VERSION_CODES.HONEYCOMB){
+			return false;
+		}
+
+		MyDragShadowBuilder builder = new MyDragShadowBuilder(view);
+		/* LocalStateとして、ListViewItem(view)を送信する */
+		view.startDrag(null, builder, view, 0);
+		view.setVisibility(View.INVISIBLE);
+		mDragTarget = view;
+
+		return true;
+	}
+
+	private void onDrop(View dropped, int x, int y){
+		int count = mListPrefix.getChildCount();
+		Rect rect = new Rect();
+
+		View target = null;
+		for(int i = 0; i < count; i++){
+			View child = mListPrefix.getChildAt(i);
+			child.getHitRect(rect);
+			if(rect.contains(x, y)){
+				target = child;
+				break;
+			}
+		}
+
+		if(target == null || target == dropped){
+			return;
+		}
+
+		PrefixData targetData = (PrefixData) target.getTag();
+		PrefixData droppedData = (PrefixData) dropped.getTag();
+
+		if(targetData == null || droppedData == null){
+			return;
+		}
+
+		mAdapter.replace(targetData, droppedData);
+		mAdapter.notifyDataSetChanged();
+	}
+
+	private void dragEnd(){
+		if(mDragTarget == null){
+			return;
+		}
+		mDragTarget.setVisibility(View.VISIBLE);
+		mDragTarget = null;
+	}
+
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private static class MyDragShadowBuilder extends DragShadowBuilder{
+
+		private MyDragShadowBuilder(View targetView){
+			super(targetView);
+		}
+
+		@Override
+		public void onProvideShadowMetrics(Point shadowSize, Point shadowTouchPoint) {
+			View view = getView();
+			shadowSize.set(view.getWidth(), view.getHeight());
+			/* TODO:暫定で中央部がタッチされたとする */
+			shadowTouchPoint.set((int)view.getWidth() / 2, (int)view.getHeight() / 2);
+		}
+
+	}
+
+	/* 本当はMainActivityにonDragListenerを継承させたかったが、
+	 MainActivity全体にTargetApiが影響するので、
+	 プライベートクラスを定義する */
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private static class MyOnDragListener implements OnDragListener{
+
+		private MainActivity mActivity;
+
+		private MyOnDragListener(MainActivity activity){
+			mActivity = activity;
+		}
+
+		@Override
+		public boolean onDrag(View v, DragEvent event){
+			int action = event.getAction();
+
+			switch(action){
+			case DragEvent.ACTION_DRAG_STARTED:
+			case DragEvent.ACTION_DRAG_ENTERED:
+			case DragEvent.ACTION_DRAG_LOCATION:
+			case DragEvent.ACTION_DRAG_EXITED:
+			/* やることなし */
+				break;
+
+			case DragEvent.ACTION_DROP:
+				mActivity.onDrop((View)event.getLocalState(), (int)event.getX(), (int)event.getY());
+				break;
+
+			case DragEvent.ACTION_DRAG_ENDED:
+				mActivity.dragEnd();
+				break;
+			}
+			return true;
+		}
 	}
 }
