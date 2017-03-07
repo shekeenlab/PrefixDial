@@ -1,21 +1,28 @@
 package jp.co.shekeenlab.PrefixDial;
 
+import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Point;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class PrefixListAdapter extends ArrayAdapter<PrefixData> {
+public class PrefixListAdapter extends ArrayAdapter<PrefixData> implements OnTouchListener{
 	
 	private LayoutInflater mInflater;
+	private HashMap<PrefixData, Point> mHashTouch;
 	
 	public PrefixListAdapter(Context context, int textViewResourceId, List<PrefixData> objects) {
 		super(context, textViewResourceId, objects);
 		mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		mHashTouch = new HashMap<>();
 	}
 
 	@Override
@@ -35,6 +42,7 @@ public class PrefixListAdapter extends ArrayAdapter<PrefixData> {
 			textPrefix.setText(data.prefix);
 		}
 		convertView.setTag(data);
+		convertView.setOnTouchListener(this);
 		return convertView;
 	}
 
@@ -59,5 +67,37 @@ public class PrefixListAdapter extends ArrayAdapter<PrefixData> {
 		/* smallerは2つListに入っているので、若いほうをremoveで削除する */
 		remove(smaller);
 		insert(larger, posSmaller);
+	}
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event){
+		Object tag = v.getTag();
+		if(!(tag instanceof PrefixData)){
+			return false;
+		}
+
+		/* タッチ座標はonItemLongClickで教えたもらえないので、
+		 * 自分で覚えておく */
+		PrefixData data = (PrefixData) tag;
+		Point point = new Point((int) event.getX(), (int) event.getY());
+		mHashTouch.put(data, point);
+
+		/* onItemClickやonItemLongClickを検出してほしいので、タッチイベントをスルーする */
+		return false;
+	}
+
+	public boolean getTouchPoint(View view, @NonNull Point point){
+		Object tag = view.getTag();
+		if(!(tag instanceof PrefixData)){
+			return false;
+		}
+
+		Point touch = mHashTouch.get(tag);
+		if(touch == null){
+			return false;
+		}
+
+		point.set(touch.x, touch.y);
+		return true;
 	}
 }

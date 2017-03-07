@@ -198,8 +198,13 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 			return false;
 		}
 
-		MyDragShadowBuilder builder = new MyDragShadowBuilder(view);
-		/* LocalStateとして、ListViewItem(view)を送信する */
+		Point touch = new Point();
+		boolean found = mAdapter.getTouchPoint(view, touch);
+		if(!found){
+			return false;
+		}
+		MyDragShadowBuilder builder = new MyDragShadowBuilder(view, touch);
+		/* LocalStateとして、ListViewItem(変数view)を送信する */
 		view.startDrag(null, builder, view, 0);
 		view.setVisibility(View.INVISIBLE);
 		mDragTarget = view;
@@ -247,16 +252,19 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private static class MyDragShadowBuilder extends DragShadowBuilder{
 
-		private MyDragShadowBuilder(View targetView){
+		private Point mTouchPoint;
+
+		private MyDragShadowBuilder(View targetView, Point touchPoint){
 			super(targetView);
+			mTouchPoint = touchPoint;
 		}
 
 		@Override
 		public void onProvideShadowMetrics(Point shadowSize, Point shadowTouchPoint) {
 			View view = getView();
 			shadowSize.set(view.getWidth(), view.getHeight());
-			/* TODO:暫定で中央部がタッチされたとする */
-			shadowTouchPoint.set((int)view.getWidth() / 2, (int)view.getHeight() / 2);
+			int offset = view.getContext().getResources().getDimensionPixelSize(R.dimen.shadow_offset);
+			shadowTouchPoint.set(mTouchPoint.x + offset, mTouchPoint.y + offset);
 		}
 
 	}
