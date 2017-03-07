@@ -239,6 +239,13 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 
 		mAdapter.replace(targetData, droppedData);
 		mAdapter.notifyDataSetChanged();
+
+		/* DBも更新する */
+		int oldPosition = targetData.position;
+		targetData.position = droppedData.position;
+		droppedData.position = oldPosition;
+		PrefixResolver.updateItemInDatabase(this, targetData);
+		PrefixResolver.updateItemInDatabase(this, droppedData);
 	}
 
 	private void dragEnd(){

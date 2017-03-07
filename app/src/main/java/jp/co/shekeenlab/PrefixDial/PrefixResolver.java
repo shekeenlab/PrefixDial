@@ -1,6 +1,7 @@
 package jp.co.shekeenlab.PrefixDial;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.content.ContentResolver;
@@ -8,6 +9,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+
+import jp.co.shekeenlab.PrefixDial.PrefixData.PositionComparator;
 
 public class PrefixResolver {
 	
@@ -46,10 +49,13 @@ public class PrefixResolver {
 		if(cursor == null){
 			return new ArrayList<PrefixData>();
 		}
-		
+
+		/* インデックスはSQLから読み出す式によって変わるので、一律グローバルに保持するのはあまりよくない */
+		/* ただし、createFromCursorでインデックスを取得すると、繰り返し同じメソッド呼ぶことになってしまう… */
 		PrefixColumns.INDEX_DB_ID = cursor.getColumnIndex(PrefixColumns._ID);
 		PrefixColumns.INDEX_TITLE = cursor.getColumnIndex(PrefixColumns.KEY_TITLE);
 		PrefixColumns.INDEX_PREFIX = cursor.getColumnIndex(PrefixColumns.KEY_PREFIX);
+		PrefixColumns.INDEX_POSITION = cursor.getColumnIndex(PrefixColumns.KEY_POSITION);
 
 		ArrayList<PrefixData> indexList = new ArrayList<PrefixData>();
 		ArrayList<Long> idToDelete = new ArrayList<Long>();
@@ -66,6 +72,28 @@ public class PrefixResolver {
 			resolver.delete(uri, null, null);
 		}
 		cursor.close();
+
+		/* positionが全て0かチェックし、全て0だったらpositionを設定する */
+		boolean positionAvailable = false;
+		for(PrefixData data : indexList){
+			if(data.position != 0){
+				positionAvailable = true;
+				break;
+			}
+		}
+
+		if(!positionAvailable){
+			/* position初期値を設定して、DBに書き込む */
+			for(int i = 0; i < indexList.size(); i++){
+				PrefixData data = indexList.get(i);
+				data.position = i;
+				updateItemInDatabase(context, data);
+			}
+		}
+
+		/* positionでソートする */
+		Collections.sort(indexList, new PositionComparator());
+
 		return indexList;
 	}
 }

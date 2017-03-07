@@ -19,7 +19,7 @@ public class PrefixProvider extends ContentProvider {
 	public static final String TABLE_PREFIX = "prefix";
 	private static final String TABLE_TEMPORARY = "temporary";
 	private static final String DATABASE_NAME = "prefix.db";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 	private SQLiteOpenHelper mOpenHelper;
 	
 	@Override
@@ -102,7 +102,8 @@ public class PrefixProvider extends ContentProvider {
 			db.execSQL("CREATE TABLE " + TABLE_PREFIX + " (" + 
 					PrefixColumns._ID + " INTEGER PRIMARY KEY," +
 	                PrefixColumns.KEY_TITLE + " TEXT," +
-	                PrefixColumns.KEY_PREFIX + " TEXT" +
+	                PrefixColumns.KEY_PREFIX + " TEXT," +
+					PrefixColumns.KEY_POSITION + " INTEGER" +
 	                ");");
 		}
 
