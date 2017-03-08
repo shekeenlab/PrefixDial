@@ -1,20 +1,22 @@
 package jp.co.shekeenlab.PrefixDial;
 
-import java.util.List;
-
+import android.Manifest.permission;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+
+import java.util.List;
 
 public class HookActivity extends Activity implements OnItemClickListener {
 
@@ -84,7 +86,11 @@ public class HookActivity extends Activity implements OnItemClickListener {
 		}
 		Uri uri = Uri.parse("tel:" + data.prefix + mPhoneNumber);
 		Intent intent = new Intent(Intent.ACTION_CALL, uri);
-		startActivity(intent);
+
+		int result = getPackageManager().checkPermission(permission.CALL_PHONE, getPackageName());
+		if(result == PackageManager.PERMISSION_GRANTED){
+			startActivity(intent);
+		}
 	}
 	
 	@Override
