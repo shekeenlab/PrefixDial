@@ -123,6 +123,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 	public void onClick(View v) {
 		if(v == mButtonAdd){
 			Intent intent = new Intent(this, EditActivity.class);
+			intent.putExtra(EditActivity.EXTRA_ADD_POSITION, mAdapter.getCount());/* 最後尾に追加する */
 			startActivityForResult(intent, REQUEST_EDIT_PREFIX);
 		}
 	}

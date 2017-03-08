@@ -13,14 +13,14 @@ import android.widget.EditText;
 public class EditActivity extends Activity implements TextWatcher, OnClickListener {
 
 	public static final String EXTRA_PREFIX_DATA = "jp.co.shekeenlab.PrefixDial.EditActivity.extra.PREFIX";
-	public static final int MODE_ADD = 0;
-	public static final int MODE_EDIT = 1;
-	
+	public static final String EXTRA_ADD_POSITION = "jp.co.shekeenlab.PrefixDial.EditActivity.extra.ADD_POSITION";
+
 	private EditText mEditTitle;
 	private EditText mEditPrefix;
 	private Button mButtonPositive;
 	private Button mButtonNegative;
 	private PrefixData mPrefixData;
+	private int mAddPosition;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +34,8 @@ public class EditActivity extends Activity implements TextWatcher, OnClickListen
 		
 		Intent intent = getIntent();
 		mPrefixData = intent.getParcelableExtra(EXTRA_PREFIX_DATA);
+		mAddPosition = intent.getIntExtra(EXTRA_ADD_POSITION, 0);
+
 		if(mPrefixData != null){
 			mEditTitle.setText(mPrefixData.title);
 			mEditPrefix.setText(mPrefixData.prefix);
@@ -85,6 +87,7 @@ public class EditActivity extends Activity implements TextWatcher, OnClickListen
 				PrefixData data = new PrefixData();
 				data.title = mEditTitle.getText().toString();
 				data.prefix = mEditPrefix.getText().toString();
+				data.position = mAddPosition;
 				PrefixResolver.addItemToDatabase(this, data);
 			}
 			setResult(RESULT_OK);
