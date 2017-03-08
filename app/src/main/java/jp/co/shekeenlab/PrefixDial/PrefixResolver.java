@@ -94,6 +94,16 @@ public class PrefixResolver {
 		/* positionでソートする */
 		Collections.sort(indexList, new PositionComparator());
 
+		/* 削除による欠番がないか確認する */
+		for(int i = 0; i < indexList.size(); i++){
+			PrefixData data = indexList.get(i);
+			/* ずれていたらpositionを更新して保存する */
+			if(data.position != i){
+				data.position = i;
+				updateItemInDatabase(context, data);
+			}
+		}
+
 		return indexList;
 	}
 }
