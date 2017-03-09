@@ -151,8 +151,10 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 		
 		if(requestCode == REQUEST_EDIT_PREFIX && resultCode == RESULT_OK){
 			List<PrefixData> dataList = PrefixResolver.loadFromDatabase(this);
-			PrefixListAdapter adapter = new PrefixListAdapter(this, 0, dataList);
-			mListPrefix.setAdapter(adapter);
+			mAdapter.clear();
+			for(PrefixData prefix : dataList){
+				mAdapter.add(prefix);
+			}
 		}
 	}
 
