@@ -217,12 +217,15 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 		int count = mListPrefix.getChildCount();
 		Rect rect = new Rect();
 
+		/* ドロップされた位置にあるviewの位置を探す */
 		View target = null;
+		int targetPosition = -1;
 		for(int i = 0; i < count; i++){
 			View child = mListPrefix.getChildAt(i);
 			child.getHitRect(rect);
 			if(rect.contains(x, y)){
 				target = child;
+				targetPosition = i;
 				break;
 			}
 		}
@@ -238,15 +241,16 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 			return;
 		}
 
-		mAdapter.replace(targetData, droppedData);
+		mAdapter.remove(droppedData);
+		mAdapter.insert(droppedData, targetPosition);
 		mAdapter.notifyDataSetChanged();
 
 		/* DBも更新する */
-		int oldPosition = targetData.position;
-		targetData.position = droppedData.position;
-		droppedData.position = oldPosition;
-		PrefixResolver.updateItemInDatabase(this, targetData);
-		PrefixResolver.updateItemInDatabase(this, droppedData);
+		for(int i = 0; i < mAdapter.getCount(); i++){
+			PrefixData data = mAdapter.getItem(i);
+			data.position = i;
+			PrefixResolver.updateItemInDatabase(this, data);
+		}
 	}
 
 	private void dragEnd(){
