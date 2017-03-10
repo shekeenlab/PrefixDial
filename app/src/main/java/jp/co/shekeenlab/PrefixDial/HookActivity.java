@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -87,7 +89,11 @@ public class HookActivity extends Activity implements OnItemClickListener {
 		Uri uri = Uri.parse("tel:" + data.prefix + mPhoneNumber);
 		Intent intent = new Intent(Intent.ACTION_CALL, uri);
 
-		int result = getPackageManager().checkPermission(permission.CALL_PHONE, getPackageName());
+		int result = PackageManager.PERMISSION_GRANTED;
+		/* Android6以上ならばパーミッションをチェック */
+		if(VERSION.SDK_INT >= VERSION_CODES.M){
+			result = getPackageManager().checkPermission(permission.CALL_PHONE, getPackageName());
+		}
 		if(result == PackageManager.PERMISSION_GRANTED){
 			startActivity(intent);
 		}
