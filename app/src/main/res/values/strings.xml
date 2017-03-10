@@ -16,6 +16,7 @@
     <string name="check_enable_prefix">アプリを有効にする</string>
     <string name="check_show_bottom">選択ダイアログを下部に表示</string>
 	<string name="check_remove_prefix">通話履歴からプレフィックスを削除</string>
+	<string name="text_drag_drop">プレフィックスを長押しすることで表示順を変えられます</string>
 
 	<string name="key_hook_gravity" translatable="false">hook_gravity</string>
     <string name="key_remove_prefix" translatable="false">remove_prefix</string>

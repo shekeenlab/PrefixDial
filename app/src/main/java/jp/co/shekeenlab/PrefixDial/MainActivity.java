@@ -66,6 +66,9 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 		if(VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB){
 			mListPrefix.setOnDragListener(new MyOnDragListener(this));
 		}
+		else{
+			findViewById(R.id.textDragDrop).setVisibility(View.INVISIBLE);
+		}
 		
 		mButtonAdd = (Button) findViewById(R.id.buttonAddPrefix);
 		mButtonAdd.setOnClickListener(this);

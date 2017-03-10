@@ -33,6 +33,15 @@
         android:headerDividersEnabled="true" >
     </ListView>
 
+    <TextView
+        android:id="@+id/textDragDrop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/text_drag_drop"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"/>
+
     <CheckBox
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
