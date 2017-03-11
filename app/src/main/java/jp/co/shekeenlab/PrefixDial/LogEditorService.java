@@ -5,6 +5,7 @@ import android.app.Service;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.ContentObserver;
@@ -16,6 +17,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.BaseColumns;
 import android.provider.CallLog;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -108,6 +110,11 @@ public class LogEditorService extends Service{
 				}
 			}
 			cursor.close();
+		}
+		else{
+			/* 通話イベントのフックと通話履歴の編集は同じ権限グループなので、
+			 * 電話権限オフ時にはここに到達しないが、念のためトーストを実装しておく */
+			Toast.makeText(this, getText(R.string.toast_no_calllog_perm), Toast.LENGTH_LONG).show();
 		}
 
 		mResolver = null;

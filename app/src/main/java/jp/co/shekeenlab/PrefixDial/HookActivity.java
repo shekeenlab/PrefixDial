@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -96,6 +97,12 @@ public class HookActivity extends Activity implements OnItemClickListener {
 		}
 		if(result == PackageManager.PERMISSION_GRANTED){
 			startActivity(intent);
+		}
+		else{
+			/* アプリの電話権限をオフするとそもそもここに到達しないが、将来的にどうなるかわからないので、
+			 * 念のためトーストを実装しておく */
+			Context context = parent.getContext();
+			Toast.makeText(context, context.getText(R.string.toast_no_call_perm), Toast.LENGTH_LONG).show();
 		}
 	}
 	
