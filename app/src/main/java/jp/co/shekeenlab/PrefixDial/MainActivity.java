@@ -2,6 +2,7 @@ package jp.co.shekeenlab.PrefixDial;
 
 import java.util.List;
 
+import android.Manifest.permission;
 import android.annotation.TargetApi;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -86,6 +87,27 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 		mCheckRemovePrefix.setOnCheckedChangeListener(this);
 		boolean removePrefix = mSettings.getBoolean(getString(R.string.key_remove_prefix), false);
 		mCheckRemovePrefix.setChecked(removePrefix);
+
+		if(VERSION.SDK_INT >= VERSION_CODES.M){
+			String[] permissions = new String[]{
+					permission.PROCESS_OUTGOING_CALLS,
+					permission.CALL_PHONE,
+					permission.READ_PHONE_STATE,
+					permission.READ_CALL_LOG,
+					permission.WRITE_CALL_LOG,
+			};
+			int result = PackageManager.PERMISSION_GRANTED;
+			for(String perm : permissions){
+				result = getPackageManager().checkPermission(perm, getPackageName());
+				if(result == PackageManager.PERMISSION_DENIED){
+					break;
+				}
+			}
+
+			if(result == PackageManager.PERMISSION_DENIED){
+				requestPermissions(permissions, 0);
+			}
+		}
 	}
 
 	private void installDefaultPrefix(){
