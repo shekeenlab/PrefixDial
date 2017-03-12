@@ -33,6 +33,9 @@ public class HookActivity extends Activity implements OnItemClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.hook);
 		overridePendingTransition(0, 0);
+		if(VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB){
+			setFinishOnTouchOutside(false);
+		}
 
 		/* ダイアログの位置を設定する */
 		SharedPreferences settings = getSharedPreferences(MainActivity.PREFERENCE_SETTINGS, Context.MODE_PRIVATE);
