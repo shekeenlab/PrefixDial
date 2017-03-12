@@ -104,6 +104,8 @@ public class HookActivity extends Activity implements OnItemClickListener {
 			Context context = parent.getContext();
 			Toast.makeText(context, context.getText(R.string.toast_no_call_perm), Toast.LENGTH_LONG).show();
 		}
+
+		finish();
 	}
 	
 	@Override
