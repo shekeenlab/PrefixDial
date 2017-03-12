@@ -23,10 +23,9 @@ public class DialReceiver extends BroadcastReceiver {
 		}
 		/* 標準のダイアラーに遷移させずに、フック画面をはさむ。 */
 		setResultData(null);
-		Intent hook = new Intent(context, HookActivity.class);
-		hook.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+		Intent hook = new Intent(context, HookDialService.class);
 		hook.putExtra(Intent.EXTRA_PHONE_NUMBER, intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER));
-		context.startActivity(hook);
+		context.startService(hook);
 	}
 
 }

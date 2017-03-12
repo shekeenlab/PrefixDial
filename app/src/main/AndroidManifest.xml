@@ -51,6 +51,7 @@
             android:exported="false">
         </provider>
 	    <service android:name=".LogEditorService"/>
+		<service android:name=".HookDialService"/>
     </application>
 
 </manifest>
