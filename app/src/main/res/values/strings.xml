@@ -19,7 +19,12 @@
 	<string name="text_drag_drop">プレフィックスを長押しすることで表示順を変えられます</string>
 	<string name="toast_no_call_perm">プレフィックスplusに電話の権限がありません</string>
 	<string name="toast_no_calllog_perm">プレフィックスplusに通話履歴の編集権限がありません</string>
+	<string name="text_terms_of_service">本アプリは無料・広告なしであり、無保証です。\n開発者の環境にて、楽天でんわおよびみおふぉんにプレフィックスを付けて発信できることを確認していますが、すべての環境および接続先に対してプレフィックスを付けて発信できることを保障するものではありません。\nご理解いただいた方のみ、ご利用ください。</string>
+	<string name="button_show_source">ソースコードを見る</string>
+	<string name="button_show_privacy">プライバシーポリシー</string>
+	<string name="button_agree">同意する</string>
 
 	<string name="key_hook_gravity" translatable="false">hook_gravity</string>
     <string name="key_remove_prefix" translatable="false">remove_prefix</string>
+    <string name="key_terms_agreed" translatable="false">terms_agreed</string>
 </resources>

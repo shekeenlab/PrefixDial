@@ -52,6 +52,10 @@
         </provider>
 	    <service android:name=".LogEditorService"/>
 		<service android:name=".HookDialService"/>
+		<activity
+			android:name=".TermsActivity"
+			android:theme="@style/DialogTheme">
+		</activity>
     </application>
 
 </manifest>

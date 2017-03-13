@@ -40,6 +40,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 	public static final String PREFERENCE_SETTINGS = "settings";
 	private static final String KEY_INSTALL_DEFAULT = "installDefault";
 	private static final int REQUEST_EDIT_PREFIX = 1;
+	private static final int REQUEST_SHOW_TERMS = 2;
 	private SharedPreferences mSettings;
 	private ListView mListPrefix;
 	private Button mButtonAdd;
@@ -107,6 +108,12 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 			if(result == PackageManager.PERMISSION_DENIED){
 				requestPermissions(permissions, 0);
 			}
+		}
+
+		boolean agreed = mSettings.getBoolean(getString(R.string.key_terms_agreed), false);
+		if(!agreed){
+			Intent intent = new Intent(this, TermsActivity.class);
+			startActivityForResult(intent, REQUEST_SHOW_TERMS);
 		}
 	}
 
@@ -181,6 +188,14 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 				mAdapter.add(prefix);
 			}
 		}
+		else if(requestCode == REQUEST_SHOW_TERMS){
+			if(resultCode == RESULT_OK){
+				mSettings.edit().putBoolean(getString(R.string.key_terms_agreed), true).commit();
+			}
+			else{
+				finish();
+			}
+		}
 	}
 
 	@Override
@@ -194,7 +209,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 	public boolean onOptionsItemSelected(MenuItem item){
 		switch(item.getItemId()){
 		case R.id.action_privacy:
-			Uri uri = Uri.parse("https://sites.google.com/view/shekeenlab/%E3%83%97%E3%83%AC%E3%83%95%E3%82%A3%E3%83%83%E3%82%AF%E3%82%B9plus%E3%83%97%E3%83%A9%E3%82%A4%E3%83%90%E3%82%B7%E3%83%BC%E3%83%9D%E3%83%AA%E3%82%B7%E3%83%BC");
+			Uri uri = Uri.parse(TermsActivity.PRIVACY_POLICY_URL);
 			Intent i = new Intent(Intent.ACTION_VIEW, uri);
 			startActivity(i);
 			return true;
