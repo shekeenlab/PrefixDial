@@ -21,7 +21,8 @@ public class PhoneStateReceiver extends BroadcastReceiver{
 			
 			/* 実際に通話履歴が書かれるのはSTATE_IDLEが通知されてから100-200ms後になる。 */
 			/* LogEditorServiceにて通話履歴を監視を開始する */
-			if(TelephonyManager.EXTRA_STATE_IDLE.equals(state)){
+			/* 通話開始直後に切るとタイミングが変わるので、通話開始（オフフック）でも履歴監視を開始する */
+			if(TelephonyManager.EXTRA_STATE_IDLE.equals(state) || TelephonyManager.EXTRA_STATE_OFFHOOK.equals(state)){
 				/* 通話履歴からプレフィックスを削除設定が有効か確認 */
 				SharedPreferences settings = context.getSharedPreferences(MainActivity.PREFERENCE_SETTINGS, Context.MODE_PRIVATE);
 				boolean removePrefix = settings.getBoolean(context.getString(R.string.key_remove_prefix), false);
