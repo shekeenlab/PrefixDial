@@ -4,7 +4,7 @@ import android.util.Log;
 
 public class DebugHelper{
 	
-	private static boolean ENABLED = true;
+	private static boolean ENABLED = false;
 	private static final String TAG = "shekeen";
 	
 	public static void print(Object... args){
