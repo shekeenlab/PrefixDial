@@ -3,6 +3,7 @@
 
     <string name="app_name">プレフィックスplus</string>
     <string name="action_privacy">プライバシーポリシー</string>
+    <string name="action_source">ソースコードを見る</string>
     <string name="button_add_prefix">プレフィックスを追加</string>
     <string name="text_title">表示名称</string>
     <string name="text_prefix">プレフィックス</string>

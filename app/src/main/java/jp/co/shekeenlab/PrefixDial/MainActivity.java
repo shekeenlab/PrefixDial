@@ -209,10 +209,20 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 	public boolean onOptionsItemSelected(MenuItem item){
 		switch(item.getItemId()){
 		case R.id.action_privacy:
+		{
 			Uri uri = Uri.parse(TermsActivity.PRIVACY_POLICY_URL);
 			Intent i = new Intent(Intent.ACTION_VIEW, uri);
 			startActivity(i);
 			return true;
+		}
+
+		case R.id.action_source:
+		{
+			Uri uri = Uri.parse(TermsActivity.SOURCE_CODE_URL);
+			Intent i = new Intent(Intent.ACTION_VIEW, uri);
+			startActivity(i);
+			return true;
+		}
 		}
 
 		return false;
